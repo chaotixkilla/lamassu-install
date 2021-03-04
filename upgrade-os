@@ -85,7 +85,7 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
 
   command="/usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os | bash >> ~/upgrade.log"
   job="@reboot root sleep 5 | $command"
-  echo "$job" > /etc/cron.d/lamassu-upgrade
+  echo "$job\n" > /etc/cron.d/lamassu-upgrade
 
   decho "updating to node 14"
   npm install -g n
@@ -120,7 +120,7 @@ elif [[ "$UBUNTU_VERSION" == "18.04" ]]; then
 
   command="/usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os | bash >> ~/upgrade.log"
   job="@reboot root sleep 5 | $command"
-  echo "$job" > /etc/cron.d/lamassu-upgrade
+  echo "$job\n" > /etc/cron.d/lamassu-upgrade
 
   checkDpkgLock
   decho "updating to ubuntu 20.04"
