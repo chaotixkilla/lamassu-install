@@ -83,8 +83,16 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   echo
   echo -e "\033[0;33mPlease pay attention in a few minutes to the end of the following output for next steps to take.\033[0m"
 
-  command="/usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os | bash"
-  job="@reboot root $command >> ~/upgrade.log"
+  if [ -f /usr/bin/upgrade-script.sh ]; then
+    rm -r /usr/bin/upgrade-script.sh
+  fi
+
+  script_content="#!/usr/bin/env bash;
+  /usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os | bash"
+  echo "$script_content" > /usr/bin/upgrade-script.sh
+  sudo chmod +x /usr/bin/upgrade-script.sh
+  script="/usr/bin/upgrade-script.sh"
+  job="@reboot root $script >> ~/upgrade.log"
   echo "$job" > /etc/cron.d/lamassu-upgrade
 
   decho "updating to node 14"
