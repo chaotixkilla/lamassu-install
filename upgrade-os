@@ -83,7 +83,7 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   echo
   echo -e "\033[0;33mPlease pay attention in a few minutes to the end of the following output for next steps to take.\033[0m"
 
-  command = "echo \"THIS IS A CRON JOB\""
+  command="echo \"THIS IS A CRON JOB\""
   # command="SHELL=/bin/bash; PATH=/bin:/sbin:/usr/bin:/usr/sbin; /usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os | bash >> ~/upgrade.log"
   job="@reboot root $command > ~/cron_log"
   echo "$job" > /etc/cron.d/lamassu-upgrade
