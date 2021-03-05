@@ -83,9 +83,10 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   echo
   echo -e "\033[0;33mPlease pay attention in a few minutes to the end of the following output for next steps to take.\033[0m"
 
-  command="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin; SHELL=/bin/bash; /usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os > ~/upgrade.sh; sudo chmod +x ~/upgrade.sh; sudo ~/upgrade.sh >> ~/upgrade.log"
-  job="@reboot root sleep 5 && $command"
-  echo "$job" > /etc/cron.d/lamassu-upgrade
+  NEWLINE=$'\n'
+  command="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin${NEWLINE}SHELL=/bin/bash${NEWLINE}/usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os > ~/upgrade.sh${NEWLINE}sudo chmod +x ~/upgrade.sh${NEWLINE}sudo ~/upgrade.sh >> ~/upgrade.log"
+  job="@reboot root sleep 5 && ${command}${NEWLINE}"
+  echo "$job" > /etc/cron.d/lamassu
 
   decho "updating to node 14"
   npm install -g n
