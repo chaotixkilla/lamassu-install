@@ -87,8 +87,9 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   echo "$command" > /usr/bin/upgrade-script.sh
   sudo chmod +x /usr/bin/upgrade-script.sh
   job="@reboot root sleep 10 && /usr/bin/upgrade-script.sh >> ~/upgrade.log"
-  echo "$job" > /etc/cron.d/lamassu-upgrade
-  sudo chmod +x /etc/cron.d/lamassu-upgrade
+  echo "$job" > /etc/cron.d/lamassu-upgrade.sh
+  sudo chmod a+x /etc/cron.d/lamassu-upgrade.sh
+  sudo service cron reload
 
   decho "updating to node 14"
   npm install -g n
@@ -125,7 +126,9 @@ elif [[ "$UBUNTU_VERSION" == "18.04" ]]; then
   echo "$command" > /usr/bin/upgrade-script.sh
   sudo chmod +x /usr/bin/upgrade-script.sh
   job="@reboot root sleep 10 && /usr/bin/upgrade-script.sh >> ~/upgrade.log"
-  echo "$job" > /etc/cron.d/lamassu-upgrade
+  echo "$job" > /etc/cron.d/lamassu-upgrade.sh
+  sudo chmod a+x /etc/cron.d/lamassu-upgrade.sh
+  sudo service cron reload
 
   checkDpkgLock
   decho "updating to ubuntu 20.04"
