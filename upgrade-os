@@ -86,7 +86,7 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   command="/usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os | bash"
   echo "$command" > /usr/bin/upgrade-script.sh
   sudo chmod +x /usr/bin/upgrade-script.sh
-  job="@reboot root /usr/bin/upgrade-script.sh >> ~/upgrade.log"
+  job="@reboot root sleep 10 && /usr/bin/upgrade-script.sh >> ~/upgrade.log"
   echo "$job" > /etc/cron.d/lamassu-upgrade
 
   decho "updating to node 14"
@@ -123,7 +123,7 @@ elif [[ "$UBUNTU_VERSION" == "18.04" ]]; then
   command="/usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os | bash"
   echo "$command" > /usr/bin/upgrade-script.sh
   sudo chmod +x /usr/bin/upgrade-script.sh
-  job="@reboot root /usr/bin/upgrade-script.sh >> ~/upgrade.log"
+  job="@reboot root sleep 10 && /usr/bin/upgrade-script.sh >> ~/upgrade.log"
   echo "$job" > /etc/cron.d/lamassu-upgrade
 
   checkDpkgLock
