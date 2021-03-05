@@ -71,7 +71,7 @@ if [ -f /usr/bin/check-upgrade-status ]; then
   rm -r /usr/bin/check-upgrade-status
 fi
 
-echo "tail -n 10 ~/upgrade.log" > /usr/bin/check-upgrade-status
+echo "tail -n 10 /tmp/upgrade.log" > /usr/bin/check-upgrade-status
 sudo chmod +x /usr/bin/check-upgrade-status
 
 if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
@@ -83,9 +83,8 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   echo
   echo -e "\033[0;33mPlease pay attention in a few minutes to the end of the following output for next steps to take.\033[0m"
 
-  NEWLINE=$'\n'
-  command="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin${NEWLINE}SHELL=/bin/bash${NEWLINE}/usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os > ~/upgrade.sh${NEWLINE}sudo chmod +x ~/upgrade.sh${NEWLINE}sudo ~/upgrade.sh >> ~/upgrade.log"
-  job="@reboot root sleep 5 && ${command}${NEWLINE}"
+  command="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin; SHELL=/bin/bash; /usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os > /tmp/lamassu-upgrade.sh; sudo chmod +x /tmp/lamassu-upgrade.sh; sudo /tmp/lamassu-upgrade.sh >> /tmp/upgrade.log"
+  job="@reboot root sleep 5 && $command"
   echo "$job" > /etc/cron.d/lamassu
 
   decho "updating to node 14"
@@ -119,9 +118,9 @@ elif [[ "$UBUNTU_VERSION" == "18.04" ]]; then
   echo -e "\033[0;33mNOTE: Some of the system's dependencies might require more reboots than expected during this process.\033[0m"
   echo
 
-  command="/usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os > ~/upgrade.sh; sudo chmod +x ~/upgrade.sh; sudo ~/upgrade.sh >> ~/upgrade.log"
+  command="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin; SHELL=/bin/bash; /usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os > /tmp/lamassu-upgrade.sh; sudo chmod +x /tmp/lamassu-upgrade.sh; sudo /tmp/lamassu-upgrade.sh >> /tmp/upgrade.log"
   job="@reboot root sleep 5 && $command"
-  echo "$job" > /etc/cron.d/lamassu-upgrade
+  echo "$job" > /etc/cron.d/lamassu
 
   checkDpkgLock
   decho "updating to ubuntu 20.04"
