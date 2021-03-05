@@ -88,6 +88,7 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   sudo chmod +x /usr/bin/upgrade-script.sh
   job="@reboot root sleep 10 && /usr/bin/upgrade-script.sh >> ~/upgrade.log"
   echo "$job" > /etc/cron.d/lamassu-upgrade
+  sudo chmod +x /etc/cron.d/lamassu-upgrade
 
   decho "updating to node 14"
   npm install -g n
