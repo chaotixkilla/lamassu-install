@@ -22,20 +22,7 @@ checkDpkgLock () {
 }
 
 checkIfRebootNeeded () {
-  if [ -f /var/run/reboot-required ]
-  then
-    echo 
-    echo -e "\033[0;33mThe server will now reboot, resuming the update process directly afterwards.\033[0m"
-    echo -e "\033[0;33mDuring this time, paired machines will not be online.\033[0m"
-    echo
-    echo -e "\033[0;33mPlease wait 30 minutes before logging back into your server's terminal.\033[0m"
-    echo 
-    echo -e "\033[0;33mAfter logging in, consult the update process and the required next step with the following command:\033[0m"
-    echo 
-    echo -e "\033[0;33mcheck-upgrade-status\033[0m"
-    echo 
-    sudo shutdown -r now
-  fi
+  if [ -f /var/run/reboot-required ]; then sudo shutdown -r now; fi
 }
 
 checkIfCanContinue () {
@@ -51,7 +38,7 @@ cat <<'FIG'
 |_|\__,_|_| |_| |_|\__,_|___/___/\__,_|     |___/\___|_|    \_/ \___|_|
 FIG
 
-echo -e "\nStarting \033[1mlamassu-server\033[0m OS update. This will take a while...\n"
+echo -e "\nStarting \033[1mlamassu-server\033[0m update. This will take a few minutes...\n"
 
 if [ "$(whoami)" != "root" ]; then
   echo -e "This script has to be run as \033[1mroot\033[0m user"
@@ -69,32 +56,18 @@ if [ -f /usr/bin/check-upgrade-status ]; then
   rm -r /usr/bin/check-upgrade-status
 fi
 
-if [ ! -f /var/log/lamassu-upgrade.log ]; then
-  touch /var/log/lamassu-upgrade.log
-  chown root /var/log/lamassu-upgrade.log
-  chmod 600 /var/log/lamassu-upgrade.log
-fi
-
-echo "tail -n 10 /var/log/lamassu-upgrade.log" > /usr/bin/check-upgrade-status
+echo "tail -f ~/upgrade.log" > /usr/bin/check-upgrade-status
 sudo chmod +x /usr/bin/check-upgrade-status
 
 if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   echo "Detected Ubuntu version: 16.04. Updating to Ubuntu version: 18.04..."
   echo
-  echo -e "\033[0;33mThe server operating system upgrade should take around 30 minutes total.\033[0m"
+  echo -e "\033[0;33mNOTE: Some of the system's dependencies might require more reboots than expected during this process.\033[0m"
   echo
-  echo -e "\033[0;33mDuring this time, your paired machines will be offline.\033[0m"
-  echo
-  echo -e "\033[0;33mPlease pay attention in a few minutes to the end of the following output for next steps to take.\033[0m"
 
-  sudo crontab -l > lamassu-upgrade
-  echo "@reboot root sleep 5 && /usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os | bash >> /var/log/lamassu-upgrade.log" >> lamassu-upgrade
-  sudo crontab lamassu-upgrade
-  sudo rm lamassu-upgrade
-
-  # command="/usr/bin/lamassu-upgrade.sh >> ~/upgrade.log"
-  # job="@reboot root sleep 5 | $command"
-  # echo "$job" > /etc/cron.d/lamassu-upgrade
+  command="/usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os | bash >> ~/upgrade.log"
+  job="@reboot root sleep 5 | $command"
+  echo "$job" > /etc/cron.d/lamassu-upgrade
 
   decho "updating to node 14"
   npm install -g n
@@ -127,10 +100,9 @@ elif [[ "$UBUNTU_VERSION" == "18.04" ]]; then
   echo -e "\033[0;33mNOTE: Some of the system's dependencies might require more reboots than expected during this process.\033[0m"
   echo
 
-  crontab -l > lamassu-upgrade
-  echo "@reboot root sleep 5 && /usr/bin/lamassu-upgrade.sh >> /var/log/lamassu-upgrade.log" >> lamassu-upgrade
-  crontab lamassu-upgrade
-  rm lamassu-upgrade
+  command="/usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os | bash >> ~/upgrade.log"
+  job="@reboot root sleep 5 | $command"
+  echo "$job" > /etc/cron.d/lamassu-upgrade
 
   checkDpkgLock
   decho "updating to ubuntu 20.04"
