@@ -86,9 +86,14 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   echo
   echo -e "\033[0;33mPlease pay attention in a few minutes to the end of the following output for next steps to take.\033[0m"
 
-  command="/usr/bin/lamassu-upgrade.sh >> ~/upgrade.log"
-  job="@reboot root sleep 5 | $command"
-  echo "$job" > /etc/cron.d/lamassu-upgrade
+  crontab -l > lamassu-upgrade
+  echo "@reboot root sleep 5 && /usr/bin/lamassu-upgrade.sh >> ~/upgrade.log" >> lamassu-upgrade
+  crontab lamassu-upgrade
+  rm lamassu-upgrade
+
+  # command="/usr/bin/lamassu-upgrade.sh >> ~/upgrade.log"
+  # job="@reboot root sleep 5 | $command"
+  # echo "$job" > /etc/cron.d/lamassu-upgrade
 
   decho "updating to node 14"
   npm install -g n
@@ -121,9 +126,10 @@ elif [[ "$UBUNTU_VERSION" == "18.04" ]]; then
   echo -e "\033[0;33mNOTE: Some of the system's dependencies might require more reboots than expected during this process.\033[0m"
   echo
 
-  command="/usr/bin/lamassu-upgrade.sh >> ~/upgrade.log"
-  job="@reboot root sleep 5 | $command"
-  echo "$job" > /etc/cron.d/lamassu-upgrade
+  crontab -l > lamassu-upgrade
+  echo "@reboot root sleep 5 && /usr/bin/lamassu-upgrade.sh >> ~/upgrade.log" >> lamassu-upgrade
+  crontab lamassu-upgrade
+  rm lamassu-upgrade
 
   checkDpkgLock
   decho "updating to ubuntu 20.04"
