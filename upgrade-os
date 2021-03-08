@@ -38,7 +38,7 @@ cat <<'FIG'
 |_|\__,_|_| |_| |_|\__,_|___/___/\__,_|     |___/\___|_|    \_/ \___|_|
 FIG
 
-echo -e "\nStarting \033[1mlamassu-server\033[0m update. This will take a few minutes...\n"
+echo -e "\nStarting \033[1mlamassu-server\033[0m OS update. This will take a while...\n"
 
 if [ "$(whoami)" != "root" ]; then
   echo -e "This script has to be run as \033[1mroot\033[0m user"
@@ -56,7 +56,7 @@ if [ -f /usr/bin/check-upgrade-status ]; then
   rm -r /usr/bin/check-upgrade-status
 fi
 
-echo "tail -f ~/upgrade.log" > /usr/bin/check-upgrade-status
+echo "tail -n 10 ~/upgrade.log" > /usr/bin/check-upgrade-status
 sudo chmod +x /usr/bin/check-upgrade-status
 
 if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
@@ -86,10 +86,13 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
 
   echo
   echo -e "\033[0;33mUbuntu successfully updated to version 18.04!\033[0m"
-  echo -e "\033[0;33mThe server will now reboot, resuming the update process directly after.\033[0m"
+  echo -e "\033[0;33mThe server will now reboot, resuming the update process directly afterwards.\033[0m"
   echo -e "\033[0;33mDuring this time, paired machines will not be online.\033[0m"
   echo
-  echo -e "Please wait 10 seconds before logging in, and consult the update process with the following command:"
+  echo -e "Please wait 30 minutes before logging back into your server's terminal."
+  echo
+  echo -e "After logging in, consult the update process and the required next step with the following command:"
+  echo
   echo -e "\033[0;33mcheck-upgrade-status\033[0m"
   echo
   rm -r /var/lock/lamassu-update
@@ -116,10 +119,13 @@ elif [[ "$UBUNTU_VERSION" == "18.04" ]]; then
 
   echo
   echo -e "\033[0;33mUbuntu successfully updated to version 20.04!\033[0m"
-  echo -e "\033[0;33mThe server will now reboot, allowing you to complete the update process after logging back into its terminal.\033[0m"
+  echo -e "\033[0;33mThe server will now reboot, resuming the update process directly afterwards.\033[0m"
   echo -e "\033[0;33mDuring this time, paired machines will not be online.\033[0m"
   echo
-  echo -e "Please wait 10 seconds before logging in, and consult the update process with the following command:"
+  echo -e "Please wait 30 minutes before logging back into your server's terminal."
+  echo
+  echo -e "After logging in, consult the update process and the required next step with the following command:"
+  echo
   echo -e "\033[0;33mcheck-upgrade-status\033[0m"
   echo
   rm -r /var/lock/lamassu-update
