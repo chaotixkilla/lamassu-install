@@ -1,17 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-export LOG_FILE=/tmp/update.$(date +"%Y%m%d").log
-
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 UBUNTU_VERSION=$(lsb_release -rs)
-
-rm -f ${LOG_FILE}
-
-decho () {
-  echo `date +"%H:%M:%S"` $1
-  echo `date +"%H:%M:%S"` $1 >> ${LOG_FILE}
-}
 
 checkDpkgLock () {
   while sudo fuser /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock >/dev/null 2>&1
@@ -22,7 +13,19 @@ checkDpkgLock () {
 }
 
 checkIfRebootNeeded () {
-  if [ -f /var/run/reboot-required ]; then sudo shutdown -r now; fi
+  if [ -f /var/run/reboot-required ]
+  then
+    echo -e "\033[0;33mThe server will now reboot, resuming the update process directly afterwards.\033[0m"
+    echo -e "\033[0;33mDuring this time, paired machines will not be online.\033[0m"
+    echo
+    echo -e "Please wait 30 minutes before logging back into your server's terminal."
+    echo
+    echo -e "After logging in, consult the update process and the required next step with the following command:"
+    echo
+    echo -e "\033[0;33mcheck-upgrade-status\033[0m"
+    echo
+    sudo shutdown -r now
+  fi
 }
 
 checkIfCanContinue () {
@@ -69,13 +72,13 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   job="@reboot root sleep 5 | $command"
   echo "$job" > /etc/cron.d/lamassu-upgrade
 
-  decho "updating to node 14"
+  echo "updating to node 14"
   npm install -g n
   sudo n 14
   sudo n which 14
 
   checkDpkgLock
-  decho "updating to ubuntu 18.04"
+  echo "updating to ubuntu 18.04"
   sudo apt-get update -y --allow-downgrades --allow-remove-essential --allow-change-held-packages
   checkIfCanContinue
   sudo DEBIAN_FRONTEND=noninteractive apt-get --with-new-pkgs upgrade -y --allow-downgrades --allow-remove-essential --allow-change-held-packages
@@ -108,7 +111,7 @@ elif [[ "$UBUNTU_VERSION" == "18.04" ]]; then
   echo "$job" > /etc/cron.d/lamassu-upgrade
 
   checkDpkgLock
-  decho "updating to ubuntu 20.04"
+  echo "updating to ubuntu 20.04"
   sudo apt-get update -y --allow-downgrades --allow-remove-essential --allow-change-held-packages
   checkIfCanContinue
   sudo DEBIAN_FRONTEND=noninteractive apt-get --with-new-pkgs upgrade -y --allow-downgrades --allow-remove-essential --allow-change-held-packages
