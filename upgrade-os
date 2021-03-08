@@ -67,15 +67,21 @@ if ! mkdir /var/lock/lamassu-update; then
   exit 1
 fi
 
-if [ -f /usr/bin/check-upgrade-status ]; then
-  rm -r /usr/bin/check-upgrade-status
+if [ -f /usr/bin/check-upgrade-status.sh ]; then
+  rm -r /usr/bin/check-upgrade-status.sh
 fi
 
 /usr/bin/curl -sS https://raw.githubusercontent.com/chaotixkilla/lamassu-install/electric-enlil-upgrade/upgrade-os > /usr/bin/lamassu-upgrade.sh
 sudo chmod +x /usr/bin/lamassu-upgrade.sh
 
-echo "tail -n 10 ~/upgrade.log" > /usr/bin/check-upgrade-status
-sudo chmod +x /usr/bin/check-upgrade-status
+if [ ! -f /var/log/lamassu-upgrade.log ]; then
+  touch /var/log/lamassu-upgrade.log
+  chown root /var/log/lamassu-upgrade.log
+  chmod 600 /var/log/lamassu-upgrade.log
+fi
+
+echo "tail -n 10 /var/log/lamassu-upgrade.log" > /usr/bin/check-upgrade-status.sh
+sudo chmod +x /usr/bin/check-upgrade-status.sh
 
 if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   echo "Detected Ubuntu version: 16.04. Updating to Ubuntu version: 18.04..."
@@ -87,7 +93,7 @@ if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
   echo -e "\033[0;33mPlease pay attention in a few minutes to the end of the following output for next steps to take.\033[0m"
 
   crontab -l > lamassu-upgrade
-  echo "@reboot root sleep 5 && /usr/bin/lamassu-upgrade.sh >> ~/upgrade.log" >> lamassu-upgrade
+  echo "@reboot root sleep 5 && /usr/bin/lamassu-upgrade.sh >> /var/log/lamassu-upgrade.log" >> lamassu-upgrade
   crontab lamassu-upgrade
   rm lamassu-upgrade
 
@@ -127,7 +133,7 @@ elif [[ "$UBUNTU_VERSION" == "18.04" ]]; then
   echo
 
   crontab -l > lamassu-upgrade
-  echo "@reboot root sleep 5 && /usr/bin/lamassu-upgrade.sh >> ~/upgrade.log" >> lamassu-upgrade
+  echo "@reboot root sleep 5 && /usr/bin/lamassu-upgrade.sh >> /var/log/lamassu-upgrade.log" >> lamassu-upgrade
   crontab lamassu-upgrade
   rm lamassu-upgrade
 
